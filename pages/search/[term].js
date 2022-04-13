@@ -7,7 +7,7 @@ import Container from "../../components/Container";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
-import Products from "../../components/Products";
+import Products from "../../components/Events";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -32,7 +32,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>GDELT Hackathon UX</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="bg-white w-full min-h-screen">
