@@ -1,12 +1,45 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowNarrowRightIcon } from "@heroicons/react/outline";
+import 'mapbox-gl/dist/mapbox-gl.css';
+import mapboxgl from "!mapbox-gl";
 
-const Hero = () => {
+const Hero = ({ mapboxAccessToken, heatmapData }) => {
+
+  mapboxgl.accessToken = mapboxAccessToken;
+
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+
+  useEffect(() => {
+    if(map.current) return;
+    map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/dark-v10",
+        center: [-70.9, 42.35],
+        zoom: 3
+    });
+    map.current.on("load", () => {
+        map.current.addSource("news", {
+            "type": "geojson",
+            "data": heatmapData
+        });
+        map.current.addLayer(
+            {
+                "id": "news-events",
+                "type": "heatmap",
+                "source": "news"
+            },
+            "waterway-label"
+        )
+    });
+  });
+
   return (
     <div className="h-96 rounded-md overflow-hidden bg-cover bg-center relative">
-      <Image
+        <div ref={mapContainer} className="map-container h-full" />
+      {/* <Image
         src="/images/hero.jpg"
         alt="Hero Image"
         layout="fill"
@@ -27,7 +60,7 @@ const Hero = () => {
             </button>
           </Link>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

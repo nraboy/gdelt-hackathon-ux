@@ -62,7 +62,7 @@ const Header = () => {
                 GDELT Hackathon UX
               </div>
             </Link>
-            <div className="flex items-center justify-end w-full">
+            {/* <div className="flex items-center justify-end w-full">
               <button className="text-gray-600 focus:outline-none mx-4 sm:mx-0">
                 <ShoppingCartIcon
                   onClick={() => setIsCartOpen(!isCartOpen)}
@@ -80,7 +80,7 @@ const Header = () => {
                   <MenuIcon className="h-5 w-5" />
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <nav
@@ -92,21 +92,12 @@ const Header = () => {
               <div className="mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0">
                 <Link href="/">Home</Link>
               </div>
-              <div className="mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0">
-                <Link href="/products">Shop</Link>
-              </div>
               <div
                 className="mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0"
                 href="#"
               >
                 <Link href="/products/category">Categories</Link>
               </div>
-              <a
-                className="mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0"
-                href="#"
-              >
-                Contact
-              </a>
               <a
                 className="mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0"
                 href="#"

@@ -11,7 +11,7 @@ import Events from "../components/Events";
 
 import clientPromise from "../lib/mongodb";
 
-export default function Home({ events }) {
+export default function Home({ events, mapboxAccessToken, heatmapData }) {
 //   const [products, setProducts] = useState([]);
 //   const [categories, setCategories] = useState([]);
 
@@ -38,9 +38,9 @@ export default function Home({ events }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="bg-white w-full min-h-screen">
-        {/* <Header /> */}
+        <Header />
         <Container>
-          <Hero />
+          <Hero mapboxAccessToken={mapboxAccessToken} heatmapData={heatmapData} />
           {/* <Category
             category="Recent Events"
             // categories={categories}
@@ -60,12 +60,53 @@ export async function getServerSideProps(context) {
         const client = await clientPromise;
         const db = client.db(process.env.NEXT_ATLAS_DATABASE);
         const collection = db.collection(process.env.NEXT_ATLAS_COLLECTION);
-        const events = await collection.find({}).limit(10).toArray();
+
+        var events = await collection.find({ "Info": { "$exists": true }}).limit(100).toArray();
+        var heatmap = await collection.aggregate([
+            {
+                "$limit": 1000
+            },
+            {
+                "$project": {
+                    "feature": {
+                        "type": "Feature",
+                        "geometry": "$Action.Location"
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": 1,
+                    "features": {
+                        "$push": "$feature"
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "type": "FeatureCollection",
+                    "features": 1
+                }
+            }
+        ]).toArray();
+
+        console.log(heatmap[0]);
+
+        // Hack for removing duplicate news items client side
+        events = events.reduce((unique, o) => {
+            if(!unique.some(obj => obj.SourceURL === o.SourceURL)) {
+                unique.push(o);
+            }
+            return unique;
+        }, []);
 
         return {
             props: {
                 isConnected: true,
+                mapboxAccessToken: process.env.MAPBOX_ACCESS_TOKEN,
                 events: JSON.parse(JSON.stringify(events)),
+                heatmapData: JSON.parse(JSON.stringify(heatmap[0])),
             },
         };
     } catch (e) {
